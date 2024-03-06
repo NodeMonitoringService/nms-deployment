@@ -1,0 +1,52 @@
+server:
+  disable: true
+  http_listen_address: 0.0.0.0
+  http_listen_port: NMS_PROMTAIL_PORT
+
+positions:
+  filename: /data/loki/positions.yaml
+
+clients:
+  - url: https://NMS_LOGS_URL/NMS_API_ENDPOINT/
+    basic_auth:
+      username: NMS_API_USERNAME
+      password: NMS_API_PASSWORD
+
+scrape_configs:
+
+- job_name: system
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      __path__: /var/log/*log
+
+- job_name: containers
+
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: containerlogs
+      __path__: /var/lib/docker/containers/*/*log
+
+  pipeline_stages:
+
+  - json:
+      expressions:
+        stream: stream
+        attrs: attrs
+        tag: attrs.tag
+
+  - regex:
+      expression: (?P<image_name>(?:[^|]*[^|])).(?P<container_name>(?:[^|]*[^|])).(?P<image_id>(?:[^|]*[^|])).(?P<container_id>(?:[^|]*[^|]))
+      source: "tag"
+
+  - labels:
+      tag:
+      stream:
+      image_name:
+      container_name:
+      image_id:
+      container_id:

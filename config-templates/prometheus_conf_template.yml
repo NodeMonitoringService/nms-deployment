@@ -1,0 +1,10 @@
+global:
+ scrape_interval: 10s
+ external_labels:
+   hostname: 'NMS_HOST_LABEL'
+remote_write:
+ - url: "https://NMS_METRICS_URL/NMS_API_ENDPOINT/"
+   basic_auth:
+     username: NMS_API_USERNAME
+     password: NMS_API_PASSWORD
+scrape_configs:
