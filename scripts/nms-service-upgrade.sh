@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-### DESCRIPTION: Script for updating the total monitoring stack with new stable versions
+### DESCRIPTION: Script for updating the NMS tools stack with new stable versions
 ###
-### AUTHOR: LinkRiver
+### AUTHOR: NMS
 ###
 ### OPTIONS:    -h  Display information header.
 ###             -a  Upgrade all services.
@@ -24,7 +24,7 @@ RESET=`tput setaf 7`
 ## Variables
 readonly script_name="$(basename "$0")"
 readonly script_path=$(dirname "$(realpath "$0")")
-readonly current_env="$script_path"/../.env
+readonly current_env="$script_path"/../docker-compose/.env
 readonly versions_env_url="https://raw.githubusercontent.com/NodeMonitoringService/nms-deployment-files/main/versions.env"
 readonly log_file="/tmp/nms-upgrade.log"
 
@@ -94,14 +94,15 @@ die() {
 fetch_and_compare_env() {
     # Fetch latest versions.env into a variable
     new_versions_env=$(curl -s "$versions_env_url")
+    current_env_content=$(cat $current_env)
     if [[ $? -ne 0 ]]; then
         die "error" "Failed to fetch new versions from $versions_env_url" true
     fi
 
-    if [[ "$new_versions_env" != "$current_env" ]]; then
+    if [[ "$new_versions_env" != "$current_env_content" ]]; then
         log "info" "New versions for NMS tools detected." false
         echo "Current versions:"
-        echo "$current_env"
+        cat "$current_env"
         echo "New versions available:"
         echo "$new_versions_env"
         log "info" "If you are not using all the tools, you may not need to upgrade." false
@@ -125,5 +126,5 @@ fetch_and_compare_env() {
 }
 
 # Main script execution
-log "info" "Starting the upgrade process..." false
+log "info" "Checking for updates..." false
 fetch_and_compare_env
