@@ -94,10 +94,7 @@ die() {
 fetch_and_compare_env() {
     # Fetch latest versions.env into a variable
     new_versions_env=$(curl -s "$versions_env_url")
-    current_env_content=$(cat $current_env)
-    if [[ $? -ne 0 ]]; then
-        die "error" "Failed to fetch new versions from $versions_env_url" true
-    fi
+    current_env_content=$(cat $current_env) || die "error" "Failed to read current versions from $current_env" true
 
     if [[ "$new_versions_env" != "$current_env_content" ]]; then
         log "info" "New versions for NMS tools detected." false
@@ -109,8 +106,8 @@ fetch_and_compare_env() {
         read -p "Do you want to upgrade and restart the containers? [Y/n]: " answer
         case $answer in
             [Yy]* )
-                echo "$new_versions_env" > "$current_env"
-                bash ${script_path}/nms-service-restart.sh -a
+                echo "$new_versions_env" > "$current_env" || die "error" "Failed to update $current_env with new versions." true
+                bash ${script_path}/nms-service-restart.sh -a || die "error" "Failed to restart the NMS services." true
                 die "info" "Successfully upgraded to latest supported versions." false
             ;;
             [Nn]* )
@@ -124,6 +121,7 @@ fetch_and_compare_env() {
         die "info" "Your NMS tools are running on the latest supported versions." false
     fi
 }
+
 
 # Main script execution
 log "info" "Checking for updates..." false
