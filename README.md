@@ -1,2 +1,2 @@
 # nms-deployment
-Script for deployment of NMS tools
+Files for deployment of NMS tools
