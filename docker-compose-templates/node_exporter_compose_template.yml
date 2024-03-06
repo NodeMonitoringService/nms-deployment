@@ -1,0 +1,21 @@
+name: NMS_NODE_EXPORTER_NAME
+services:
+  node-exporter:
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION}
+    container_name: NMS_NODE_EXPORTER_NAME
+    restart: always
+    network_mode: host
+    env_file:
+      - .env
+    command:
+        - --path.rootfs=/rootfs
+        - --path.procfs=/host/proc
+        - --path.sysfs=/host/sys
+        - --collector.systemd
+        - --collector.processes
+        - --web.listen-address=:NMS_NODE_EXPORTER_PORT

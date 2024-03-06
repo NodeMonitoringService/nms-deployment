@@ -1,0 +1,15 @@
+name: NMS_PROMTAIL_NAME
+services:
+  promtail:
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - NMS_INSTALL_PATH/configs/promtail.yml:/etc/promtail/promtail.yml
+      - NMS_INSTALL_PATH/data/promtail/positions:/data/loki/
+    user: root
+    image: grafana/promtail:${PROMTAIL_VERSION}
+    container_name: NMS_PROMTAIL_NAME
+    command: -config.file=/etc/promtail/promtail.yml
+    restart: always
+    network_mode: "host"
+    env_file:
+      - .env

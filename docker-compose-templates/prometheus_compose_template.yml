@@ -1,0 +1,17 @@
+name: NMS_PROMETHEUS_NAME
+services:
+  docker-compose:
+    volumes:
+      - NMS_INSTALL_PATH/data/prometheus:/prometheus
+      - NMS_INSTALL_PATH/configs/prometheus.yml:/etc/prometheus/prometheus.yml
+    user: root
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: NMS_PROMETHEUS_NAME
+    restart: always
+    network_mode: host
+    env_file:
+      - .env
+    command:
+        - --config.file=/etc/prometheus/prometheus.yml
+        - --web.enable-lifecycle
+        - --web.listen-address=:NMS_PROMETHEUS_PORT
