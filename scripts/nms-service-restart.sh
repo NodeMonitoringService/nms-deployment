@@ -26,6 +26,7 @@ RESET=`tput setaf 7`
 readonly script_name="$(basename "$0")"
 readonly script_path=$(dirname "$(realpath "$0")")
 readonly compose_path="$script_path"/../docker-compose
+readonly log_file="/tmp/nms-restart.log"
 
 ## Functions
 usage () {
