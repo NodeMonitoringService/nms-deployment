@@ -1,4 +1,4 @@
- - job_name: 'cadvisor'
+ - job_name: 'NMS_HOST_LABEL_docker'
    static_configs:
      - targets: ['localhost:NMS_CADVISOR_PORT']
      
